@@ -37,17 +37,3 @@ std::unique_ptr<Operation> Operation::Operations[256] = {
   /* 1F */ std::make_unique<ShiftAddressARightOperation>(),
 
 };
-
-Operation::Operation()
-{
-}
-
-
-Operation::~Operation()
-{
-}
-
-void NoOperation::execute(CpuState& state)
-{
-  std::cout << "NOP" << std::endl;
-}

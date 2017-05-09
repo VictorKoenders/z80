@@ -15,11 +15,8 @@ class CpuState
 class Operation
 {
 public:
+  virtual ~Operation() = default;
   static std::unique_ptr<Operation> Operations[256];
-
-  Operation();
-  ~Operation();
-
   virtual void execute(CpuState& state) = 0;
 };
 
@@ -28,6 +25,7 @@ public:
 class Address
 {
 public:
+  virtual ~Address() = default;
   virtual bool is_byte() = 0;
   virtual bool is_word() = 0;
 
@@ -43,14 +41,15 @@ public:
 class AddressByte : public Address
 {
 public:
-  bool is_byte() { return true; }
-  bool is_word() { return false; }
+  bool is_byte() override { return true; }
+  bool is_word() override { return false; }
 
-  virtual uint16_t get_word(CpuState& state)
+  uint16_t get_word(CpuState& state) override
   {
     throw "Called get_word on a byte";
   }
-  virtual void set_word(CpuState& state, uint16_t value)
+
+  void set_word(CpuState& state, uint16_t value) override
   {
     throw "Called set_word on a byte";
   }
@@ -59,14 +58,14 @@ public:
 class AddressWord : public Address
 {
 public:
-  bool is_byte() { return false; }
-  bool is_word() { return true; }
+  bool is_byte() override { return false; }
+  bool is_word() override { return true; }
 
-  uint8_t get_byte(CpuState& state)
+  uint8_t get_byte(CpuState& state) override
   {
     throw "Called set_byte on a word";
   }
-  void set_byte(CpuState& state, uint8_t value)
+  void set_byte(CpuState& state, uint8_t value) override
   {
     throw "Called set_byte on a word";
   }
@@ -77,13 +76,13 @@ template<uint16_t TValue>
 class StaticValue : public Address
 {
 public:
-  bool is_byte() { return true; }
-  bool is_word() { return true; }
-  uint8_t get_byte(CpuState& state) { return TValue; }
-  void set_byte(CpuState& state, uint8_t value) { }
-  uint16_t get_word(CpuState& state) { return TValue; }
-  void set_word(CpuState& state, uint16_t value) { }
-  std::string get_name()
+  bool is_byte() override { return true; }
+  bool is_word() override { return true; }
+  uint8_t get_byte(CpuState& state) override { return TValue; }
+  void set_byte(CpuState& state, uint8_t value) override { }
+  uint16_t get_word(CpuState& state) override { return TValue; }
+  void set_word(CpuState& state, uint16_t value) override { }
+  std::string get_name() override
   {
     std::ostringstream stringStream;
     stringStream << "0x" << std::setw(4) << std::setfill('0') << std::hex << TValue;
@@ -94,20 +93,20 @@ public:
 class AddressA : public AddressByte
 {
 public:
-	uint8_t get_byte(CpuState& state) { return 0; }
-	void set_byte(CpuState& state, uint8_t value) { }
-	std::string get_name()
-	{
-		return std::string("A");
-	}
+  uint8_t get_byte(CpuState& state) override { return 0; }
+  void set_byte(CpuState& state, uint8_t value) override { }
+  std::string get_name() override
+  {
+    return std::string("A");
+  }
 };
 
 class AddressB : public AddressByte
 {
 public:
-  uint8_t get_byte(CpuState& state) { return 0; }
-  void set_byte(CpuState& state, uint8_t value) { }
-  std::string get_name()
+  uint8_t get_byte(CpuState& state) override { return 0; }
+  void set_byte(CpuState& state, uint8_t value) override { }
+  std::string get_name() override
   {
     return std::string("B");
   }
@@ -116,51 +115,51 @@ public:
 class AddressC : public AddressByte
 {
 public:
-	uint8_t get_byte(CpuState& state) { return 0; }
-	void set_byte(CpuState& state, uint8_t value) { }
-	std::string get_name()
-	{
-		return std::string("C");
-	}
+  uint8_t get_byte(CpuState& state) override { return 0; }
+  void set_byte(CpuState& state, uint8_t value) override { }
+  std::string get_name() override
+  {
+    return std::string("C");
+  }
 };
 
 class AddressD : public AddressByte
 {
 public:
-	uint8_t get_byte(CpuState& state) { return 0; }
-	void set_byte(CpuState& state, uint8_t value) { }
-	std::string get_name()
-	{
-		return std::string("D");
-	}
+  uint8_t get_byte(CpuState& state) override { return 0; }
+  void set_byte(CpuState& state, uint8_t value) override { }
+  std::string get_name() override
+  {
+    return std::string("D");
+  }
 };
 class AddressE : public AddressByte
 {
 public:
-	uint8_t get_byte(CpuState& state) { return 0; }
-	void set_byte(CpuState& state, uint8_t value) { }
-	std::string get_name()
-	{
-		return std::string("E");
-	}
+  uint8_t get_byte(CpuState& state) override { return 0; }
+  void set_byte(CpuState& state, uint8_t value) override { }
+  std::string get_name() override
+  {
+    return std::string("E");
+  }
 };
 
 class AddressAF : public AddressWord
 {
 public:
-	uint16_t get_word(CpuState& state) { return 0; }
-	void set_word(CpuState& state, uint16_t value) { }
-	std::string get_name()
-	{
-		return std::string("AF");
-	}
+  uint16_t get_word(CpuState& state) override { return 0; }
+  void set_word(CpuState& state, uint16_t value) override { }
+  std::string get_name() override
+  {
+    return std::string("AF");
+  }
 };
 class AddressBC : public AddressWord
 {
 public:
-  uint16_t get_word(CpuState& state) { return 0; }
-  void set_word(CpuState& state, uint16_t value) { }
-  std::string get_name()
+  uint16_t get_word(CpuState& state) override { return 0; }
+  void set_word(CpuState& state, uint16_t value) override { }
+  std::string get_name() override
   {
     return std::string("BC");
   }
@@ -168,9 +167,9 @@ public:
 class AddressDE : public AddressWord
 {
 public:
-  uint16_t get_word(CpuState& state) { return 0; }
-  void set_word(CpuState& state, uint16_t value) { }
-  std::string get_name()
+  uint16_t get_word(CpuState& state) override { return 0; }
+  void set_word(CpuState& state, uint16_t value) override { }
+  std::string get_name() override
   {
     return std::string("DE");
   }
@@ -178,19 +177,19 @@ public:
 class AddressHL : public AddressWord
 {
 public:
-	uint16_t get_word(CpuState& state) { return 0; }
-	void set_word(CpuState& state, uint16_t value) { }
-	std::string get_name()
-	{
-		return std::string("HL");
-	}
+  uint16_t get_word(CpuState& state) override { return 0; }
+  void set_word(CpuState& state, uint16_t value) override { }
+  std::string get_name() override
+  {
+    return std::string("HL");
+  }
 };
 class AddressAFShadow : public AddressWord
 {
 public:
-  uint16_t get_word(CpuState& state) { return 0; }
-  void set_word(CpuState& state, uint16_t value) { }
-  std::string get_name()
+  uint16_t get_word(CpuState& state) override { return 0; }
+  void set_word(CpuState& state, uint16_t value) override { }
+  std::string get_name() override
   {
     return std::string("AF'");
   }
@@ -199,9 +198,9 @@ public:
 class AddressLocationBC : public AddressByte
 {
 public:
-  uint8_t get_byte(CpuState& state) { return 0; }
-  void set_byte(CpuState& state, uint8_t value) { }
-  std::string get_name()
+  uint8_t get_byte(CpuState& state) override { return 0; }
+  void set_byte(CpuState& state, uint8_t value) override { }
+  std::string get_name() override
   {
     return std::string("(BC)");
   }
@@ -209,9 +208,9 @@ public:
 class AddressLocationDE : public AddressByte
 {
 public:
-  uint8_t get_byte(CpuState& state) { return 0; }
-  void set_byte(CpuState& state, uint8_t value) { }
-  std::string get_name()
+  uint8_t get_byte(CpuState& state) override { return 0; }
+  void set_byte(CpuState& state, uint8_t value) override { }
+  std::string get_name() override
   {
     return std::string("(DE)");
   }
@@ -220,14 +219,16 @@ public:
 class NoOperation : public Operation
 {
 public:
-  void execute(CpuState& state);
+  void execute(CpuState& state) override {
+    std::cout << "NOP" << std::endl;
+  }
 };
 
 template<class TInto, class TFrom>
 class LoadOperation : public Operation
 {
 public:
-  void execute(CpuState& state) 
+  void execute(CpuState& state) override
   {
     TFrom from;
     TInto into;
@@ -239,7 +240,7 @@ template<class TAddress>
 class IncrementOperation : public Operation
 {
 public:
-  void execute(CpuState& state) 
+  void execute(CpuState& state) override
   {
     TAddress address;
     std::cout << "Incrementing " << address.get_name() << std::endl;
@@ -249,7 +250,7 @@ template<class TAddress>
 class DecrementOperation : public Operation
 {
 public:
-  void execute(CpuState& state)
+  void execute(CpuState& state) override
   {
     TAddress address;
     std::cout << "Decrementing " << address.get_name() << std::endl;
@@ -259,7 +260,7 @@ template<class TAddress>
 class ShiftLeftOperation : public Operation
 {
 public:
-  void execute(CpuState& state)
+  void execute(CpuState& state) override
   {
     TAddress address;
     std::cout << "Rotate " << address.get_name() << " left" << std::endl;
@@ -269,7 +270,7 @@ public:
 class ShiftAddressALeftOperation : public Operation
 {
 public:
-  void execute(CpuState& state)
+  void execute(CpuState& state) override
   {
     std::cout << "Quickly rotate A left" << std::endl;
   }
@@ -277,7 +278,7 @@ public:
 class ShiftAddressARightOperation : public Operation
 {
 public:
-  void execute(CpuState& state)
+  void execute(CpuState& state) override
   {
     std::cout << "Quickly rotate A right" << std::endl;
   }
@@ -286,21 +287,21 @@ template<class TInto, class TFrom>
 class ExchangeOperation : public Operation
 {
 public:
-	void execute(CpuState& state)
-	{
-		TFrom from;
-		TInto into;
-		std::cout << "Exchanging " << from.get_name() << " and " << into.get_name() << std::endl;
-	}
+  void execute(CpuState& state) override
+  {
+    TFrom from;
+    TInto into;
+    std::cout << "Exchanging " << from.get_name() << " and " << into.get_name() << std::endl;
+  }
 };
 template<class TInto, class TFrom>
 class AddOperation : public Operation
 {
 public:
-	void execute(CpuState& state)
-	{
-		TFrom from;
-		TInto into;
-		std::cout << "Adding " << from.get_name() << " and " << into.get_name() << std::endl;
-	}
+  void execute(CpuState& state) override
+  {
+    TFrom from;
+    TInto into;
+    std::cout << "Adding " << from.get_name() << " and " << into.get_name() << std::endl;
+  }
 };

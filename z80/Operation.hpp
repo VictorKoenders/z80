@@ -91,6 +91,17 @@ public:
   }
 };
 
+class AddressA : public AddressByte
+{
+public:
+	uint8_t get_byte(CpuState& state) { return 0; }
+	void set_byte(CpuState& state, uint8_t value) { }
+	std::string get_name()
+	{
+		return std::string("A");
+	}
+};
+
 class AddressB : public AddressByte
 {
 public:
@@ -102,17 +113,48 @@ public:
   }
 };
 
-class AddressA : public AddressByte
+class AddressC : public AddressByte
 {
 public:
-  uint8_t get_byte(CpuState& state) { return 0; }
-  void set_byte(CpuState& state, uint8_t value) { }
-  std::string get_name()
-  {
-    return std::string("A");
-  }
+	uint8_t get_byte(CpuState& state) { return 0; }
+	void set_byte(CpuState& state, uint8_t value) { }
+	std::string get_name()
+	{
+		return std::string("C");
+	}
 };
 
+class AddressD : public AddressByte
+{
+public:
+	uint8_t get_byte(CpuState& state) { return 0; }
+	void set_byte(CpuState& state, uint8_t value) { }
+	std::string get_name()
+	{
+		return std::string("D");
+	}
+};
+class AddressE : public AddressByte
+{
+public:
+	uint8_t get_byte(CpuState& state) { return 0; }
+	void set_byte(CpuState& state, uint8_t value) { }
+	std::string get_name()
+	{
+		return std::string("E");
+	}
+};
+
+class AddressAF : public AddressWord
+{
+public:
+	uint16_t get_word(CpuState& state) { return 0; }
+	void set_word(CpuState& state, uint16_t value) { }
+	std::string get_name()
+	{
+		return std::string("AF");
+	}
+};
 class AddressBC : public AddressWord
 {
 public:
@@ -121,6 +163,36 @@ public:
   std::string get_name()
   {
     return std::string("BC");
+  }
+};
+class AddressDE : public AddressWord
+{
+public:
+  uint16_t get_word(CpuState& state) { return 0; }
+  void set_word(CpuState& state, uint16_t value) { }
+  std::string get_name()
+  {
+    return std::string("DE");
+  }
+};
+class AddressHL : public AddressWord
+{
+public:
+	uint16_t get_word(CpuState& state) { return 0; }
+	void set_word(CpuState& state, uint16_t value) { }
+	std::string get_name()
+	{
+		return std::string("HL");
+	}
+};
+class AddressAFShadow : public AddressWord
+{
+public:
+  uint16_t get_word(CpuState& state) { return 0; }
+  void set_word(CpuState& state, uint16_t value) { }
+  std::string get_name()
+  {
+    return std::string("AF'");
   }
 };
 
@@ -134,8 +206,16 @@ public:
     return std::string("(BC)");
   }
 };
-
-
+class AddressLocationDE : public AddressByte
+{
+public:
+  uint8_t get_byte(CpuState& state) { return 0; }
+  void set_byte(CpuState& state, uint8_t value) { }
+  std::string get_name()
+  {
+    return std::string("(DE)");
+  }
+};
 
 class NoOperation : public Operation
 {
@@ -193,4 +273,34 @@ public:
   {
     std::cout << "Quickly rotate A left" << std::endl;
   }
+};
+class ShiftAddressARightOperation : public Operation
+{
+public:
+  void execute(CpuState& state)
+  {
+    std::cout << "Quickly rotate A right" << std::endl;
+  }
+};
+template<class TInto, class TFrom>
+class ExchangeOperation : public Operation
+{
+public:
+	void execute(CpuState& state)
+	{
+		TFrom from;
+		TInto into;
+		std::cout << "Exchanging " << from.get_name() << " and " << into.get_name() << std::endl;
+	}
+};
+template<class TInto, class TFrom>
+class AddOperation : public Operation
+{
+public:
+	void execute(CpuState& state)
+	{
+		TFrom from;
+		TInto into;
+		std::cout << "Adding " << from.get_name() << " and " << into.get_name() << std::endl;
+	}
 };

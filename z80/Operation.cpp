@@ -1,6 +1,8 @@
 #include "Operation.hpp"
+#include "Addresses.hpp"
+#include "CpuState.hpp"
+
 #include <sstream>
-#include <iomanip>
 #include <iostream>
 
 extern std::array<Operation, 256> Operations = {
@@ -40,51 +42,23 @@ extern std::array<Operation, 256> Operations = {
 
 };
 
-uint16_t AddressByte::get_word(CpuState& state)
-{
-  throw "Called get_word on a byte";
-}
-
-void AddressByte::set_word(CpuState& state, uint16_t value)
-{
-  throw "Called set_word on a byte";
-}
-
-uint8_t AddressWord::get_byte(CpuState& state)
-{
-  throw "Called set_byte on a word";
-}
-
-void AddressWord::set_byte(CpuState& state, uint8_t value)
-{
-  throw "Called set_byte on a word";
-}
-
-void NoOperation(CpuState& state)
+void NoOperation(CpuState&)
 {
   std::cout << "NOP" << std::endl;
 }
 
-void ShiftAddressALeftOperation(CpuState& state)
+void ShiftAddressALeftOperation(CpuState&)
 {
   std::cout << "Quickly rotate A left" << std::endl;
 }
 
-void ShiftAddressARightOperation(CpuState& state)
+void ShiftAddressARightOperation(CpuState&)
 {
   std::cout << "Quickly rotate A right" << std::endl;
 }
 
-template <uint16_t TValue>
-std::string StaticValue<TValue>::get_name()
-{
-  std::ostringstream stringStream;
-  stringStream << "0x" << std::setw(4) << std::setfill('0') << std::hex << TValue;
-  return stringStream.str();
-}
-
 template <class TInto, class TFrom>
-void LoadOperation(CpuState& state)
+void LoadOperation(CpuState&)
 {
   TFrom from;
   TInto into;
@@ -92,28 +66,28 @@ void LoadOperation(CpuState& state)
 }
 
 template <class TAddress>
-void IncrementOperation(CpuState& state)
+void IncrementOperation(CpuState&)
 {
   TAddress address;
   std::cout << "Incrementing " << address.get_name() << std::endl;
 }
 
 template <class TAddress>
-void DecrementOperation(CpuState& state)
+void DecrementOperation(CpuState&)
 {
   TAddress address;
   std::cout << "Decrementing " << address.get_name() << std::endl;
 }
 
 template <class TAddress>
-void ShiftLeftOperation(CpuState& state)
+void ShiftLeftOperation(CpuState&)
 {
   TAddress address;
   std::cout << "Shifting " << address.get_name() << " left" << std::endl;
 }
 
 template <class TInto, class TFrom>
-void ExchangeOperation(CpuState& state)
+void ExchangeOperation(CpuState&)
 {
   TFrom from;
   TInto into;
@@ -121,7 +95,7 @@ void ExchangeOperation(CpuState& state)
 }
 
 template <class TInto, class TFrom>
-void AddOperation(CpuState& state)
+void AddOperation(CpuState&)
 {
   TFrom from;
   TInto into;

@@ -1,4 +1,6 @@
 #include "Operation.hpp"
+#include "CpuState.hpp"
+
 #include <iomanip>
 #include <iostream>
 

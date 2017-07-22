@@ -114,9 +114,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Addresses.hpp" />
+    <ClInclude Include="CpuState.hpp" />
     <ClInclude Include="Operation.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Addresses.cpp" />
+    <ClCompile Include="CpuState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Operation.cpp" />
   </ItemGroup>

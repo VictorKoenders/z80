@@ -1,26 +1,15 @@
 #pragma once
 
-#include <memory>
-#include <iostream>
-#include <string>
-#include <iomanip>
-#include <sstream>
+#include <functional>
+#include <array>
 
 class CpuState
 {
 
 };
 
-
-class Operation
-{
-public:
-  virtual ~Operation() = default;
-  static std::unique_ptr<Operation> Operations[256];
-  virtual void execute(CpuState& state) = 0;
-};
-
-
+using Operation = std::function<void(CpuState&)>;
+extern std::array<Operation, 256> Operations;
 
 class Address
 {
@@ -44,15 +33,9 @@ public:
   bool is_byte() override { return true; }
   bool is_word() override { return false; }
 
-  uint16_t get_word(CpuState& state) override
-  {
-    throw "Called get_word on a byte";
-  }
+  uint16_t get_word(CpuState& state) override;
 
-  void set_word(CpuState& state, uint16_t value) override
-  {
-    throw "Called set_word on a byte";
-  }
+  void set_word(CpuState& state, uint16_t value) override;
 };
 
 class AddressWord : public Address
@@ -61,14 +44,9 @@ public:
   bool is_byte() override { return false; }
   bool is_word() override { return true; }
 
-  uint8_t get_byte(CpuState& state) override
-  {
-    throw "Called set_byte on a word";
-  }
-  void set_byte(CpuState& state, uint8_t value) override
-  {
-    throw "Called set_byte on a word";
-  }
+  uint8_t get_byte(CpuState& state) override;
+
+  void set_byte(CpuState& state, uint8_t value) override;
 };
 
 
@@ -82,12 +60,7 @@ public:
   void set_byte(CpuState& state, uint8_t value) override { }
   uint16_t get_word(CpuState& state) override { return TValue; }
   void set_word(CpuState& state, uint16_t value) override { }
-  std::string get_name() override
-  {
-    std::ostringstream stringStream;
-    stringStream << "0x" << std::setw(4) << std::setfill('0') << std::hex << TValue;
-    return stringStream.str();
-  }
+  std::string get_name() override;
 };
 
 class AddressA : public AddressByte
@@ -216,92 +189,26 @@ public:
   }
 };
 
-class NoOperation : public Operation
-{
-public:
-  void execute(CpuState& state) override {
-    std::cout << "NOP" << std::endl;
-  }
-};
+void NoOperation(CpuState& state);
 
 template<class TInto, class TFrom>
-class LoadOperation : public Operation
-{
-public:
-  void execute(CpuState& state) override
-  {
-    TFrom from;
-    TInto into;
-    std::cout << "Loading " << from.get_name() << " into " << into.get_name() << std::endl;
-  }
-};
+void LoadOperation(CpuState& state);
 
 template<class TAddress>
-class IncrementOperation : public Operation
-{
-public:
-  void execute(CpuState& state) override
-  {
-    TAddress address;
-    std::cout << "Incrementing " << address.get_name() << std::endl;
-  }
-};
-template<class TAddress>
-class DecrementOperation : public Operation
-{
-public:
-  void execute(CpuState& state) override
-  {
-    TAddress address;
-    std::cout << "Decrementing " << address.get_name() << std::endl;
-  }
-};
-template<class TAddress>
-class ShiftLeftOperation : public Operation
-{
-public:
-  void execute(CpuState& state) override
-  {
-    TAddress address;
-    std::cout << "Rotate " << address.get_name() << " left" << std::endl;
-  }
-};
+void IncrementOperation(CpuState& state);
 
-class ShiftAddressALeftOperation : public Operation
-{
-public:
-  void execute(CpuState& state) override
-  {
-    std::cout << "Quickly rotate A left" << std::endl;
-  }
-};
-class ShiftAddressARightOperation : public Operation
-{
-public:
-  void execute(CpuState& state) override
-  {
-    std::cout << "Quickly rotate A right" << std::endl;
-  }
-};
+template<class TAddress>
+void DecrementOperation(CpuState& state);
+
+template<class TAddress>
+void ShiftLeftOperation(CpuState& state);
+
+void ShiftAddressALeftOperation(CpuState& state);
+
+void ShiftAddressARightOperation(CpuState& state);
+
 template<class TInto, class TFrom>
-class ExchangeOperation : public Operation
-{
-public:
-  void execute(CpuState& state) override
-  {
-    TFrom from;
-    TInto into;
-    std::cout << "Exchanging " << from.get_name() << " and " << into.get_name() << std::endl;
-  }
-};
+void ExchangeOperation(CpuState& state);
+
 template<class TInto, class TFrom>
-class AddOperation : public Operation
-{
-public:
-  void execute(CpuState& state) override
-  {
-    TFrom from;
-    TInto into;
-    std::cout << "Adding " << from.get_name() << " and " << into.get_name() << std::endl;
-  }
-};
+void AddOperation(CpuState& state);

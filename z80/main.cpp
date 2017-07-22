@@ -1,18 +1,20 @@
 #include "Operation.hpp"
+#include <iomanip>
+#include <iostream>
 
-int main(char **args, int argc)
+int main()
 {
   CpuState state;
 
-  for (int i = 0; i < 256; i++) {
+  for (size_t i = 0; i < Operations.size(); i++) {
     std::cout << "0x" << std::setw(2) << std::setfill('0') << std::hex << i << ": ";
-    auto& operation = Operation::Operations[i];
+    auto& operation = Operations[i];
 
     if (operation == nullptr) {
       std::cout << "Not implemented" << std::endl;
     }
     else {
-      operation->execute(state);
+      operation(state);
     }
   }
 

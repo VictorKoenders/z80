@@ -1,44 +1,47 @@
 #include "Operation.hpp"
 #include "Addresses.hpp"
 #include "CpuState.hpp"
+#include "Conditions.hpp"
 
 #include <sstream>
 #include <iostream>
 
-extern std::array<Operation, 256> Operations = {
+std::array<Operation, 256> Operations = {
   /* 00 */ &NoOperation,
-  /* 01 */ &LoadOperation<AddressBC, StaticValue<0>>,
+  /* 01 */ &LoadOperation<AddressBC, AddressNextWord>,
   /* 02 */ &LoadOperation<AddressLocationBC, AddressA>,
   /* 03 */ &IncrementOperation<AddressBC>,
   /* 04 */ &IncrementOperation<AddressB>,
   /* 05 */ &DecrementOperation<AddressB>,
-  /* 06 */ &LoadOperation<AddressB, StaticValue<0>>,
+  /* 06 */ &LoadOperation<AddressB, AddressNextByte>,
   /* 07 */ &ShiftAddressALeftOperation,
-  /* 08 */ &ExchangeOperation<AddressAF, AddressAFShadow>,
+  /* 08 */ &LoadOperation<AddressLocationNextWord, AddressStackPointer>,
   /* 09 */ &AddOperation<AddressHL, AddressBC>,
   /* 0A */ &LoadOperation<AddressA, AddressLocationBC>,
   /* 0B */ &DecrementOperation<AddressBC>,
   /* 0C */ &IncrementOperation<AddressC>,
   /* 0D */ &DecrementOperation<AddressC>,
-  /* 0E */ &LoadOperation<AddressC, StaticValue<0>>,
+  /* 0E */ &LoadOperation<AddressC, AddressNextByte>,
   /* 0F */ &ShiftAddressARightOperation,
 
-  /* 10 */ &NoOperation, // DJNZ &4546
-  /* 11 */ &LoadOperation<AddressDE, StaticValue<0>>,
+  /* 10 */ &StopOperation,
+  /* 11 */ &LoadOperation<AddressDE, AddressNextWord>,
   /* 12 */ &LoadOperation<AddressLocationDE, AddressA>,
   /* 13 */ &IncrementOperation<AddressDE>,
   /* 14 */ &IncrementOperation<AddressD>,
   /* 15 */ &DecrementOperation<AddressD>,
-  /* 16 */ &LoadOperation<AddressD, StaticValue<0>>,
+  /* 16 */ &LoadOperation<AddressD, AddressNextByte>,
   /* 17 */ &ShiftLeftOperation<AddressA>,
-  /* 18 */ &NoOperation, // JR &4546
+  /* 18 */ &RelativeJumpOperation<ConditionTrue, AddressNextByte>,
   /* 19 */ &AddOperation<AddressHL, AddressDE>,
   /* 1A */ &LoadOperation<AddressA, AddressLocationDE>,
   /* 1B */ &DecrementOperation<AddressDE>,
   /* 1C */ &IncrementOperation<AddressE>,
   /* 1D */ &DecrementOperation<AddressE>,
-  /* 1E */ &LoadOperation<AddressC, StaticValue<0>>,
+  /* 1E */ &LoadOperation<AddressC, AddressNextByte>,
   /* 1F */ &ShiftAddressARightOperation,
+
+  /* 20 */ &RelativeJumpOperation<ConditionNotZero, AddressNextByte>
 
 };
 
@@ -102,3 +105,13 @@ void AddOperation(CpuState&)
   std::cout << "Adding " << from.get_name() << " and " << into.get_name() << std::endl;
 }
 
+void StopOperation(CpuState&){
+  std::cout << "Stopping" << std::endl;
+}
+
+template <class TCondition, class TOffset>
+void RelativeJumpOperation(CpuState&){
+  TCondition condition;
+  TOffset offset;
+  std::cout << "Jumping relatively to " << offset.get_name() << " if condition is true" << std::endl;
+}

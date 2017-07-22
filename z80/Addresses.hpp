@@ -41,6 +41,19 @@ public:
   void set_byte(CpuState&, uint8_t) override;
 };
 
+class AddressLocation : public Address {
+  public:
+  bool is_byte() override { return true; }
+  bool is_word() override { return true; }
+  
+  virtual uint16_t get_address(CpuState&) const = 0;
+
+  uint8_t get_byte(CpuState&) override { return 0; }
+  void set_byte(CpuState&, uint8_t) override {};
+  uint16_t get_word(CpuState&) override { return 0; }
+  void set_word(CpuState&, uint16_t) override {};
+};
+
 template<uint16_t TValue>
 class StaticValue : public Address
 {
@@ -148,6 +161,17 @@ public:
     return std::string("HL");
   }
 };
+class AddressStackPointer : public AddressWord
+{
+public:
+  uint16_t get_word(CpuState&) override { return 0; }
+  void set_word(CpuState&, uint16_t) override { }
+  std::string get_name() override
+  {
+    return std::string("Stack pointer");
+  }
+};
+/*
 class AddressAFShadow : public AddressWord
 {
 public:
@@ -158,24 +182,58 @@ public:
     return std::string("AF'");
   }
 };
+*/
 
-class AddressLocationBC : public AddressByte
+class AddressLocationBC : public AddressLocation
 {
 public:
-  uint8_t get_byte(CpuState&) override { return 0; }
-  void set_byte(CpuState&, uint8_t) override { }
   std::string get_name() override
   {
     return std::string("(BC)");
   }
+  uint16_t get_address(CpuState&) const { return 0; }
 };
-class AddressLocationDE : public AddressByte
+class AddressLocationDE : public AddressLocation
 {
 public:
-  uint8_t get_byte(CpuState&) override { return 0; }
-  void set_byte(CpuState&, uint8_t) override { }
   std::string get_name() override
   {
     return std::string("(DE)");
   }
+  uint16_t get_address(CpuState&) const { return 0; }
+};
+
+class AddressNextByte : public AddressByte {
+  public:
+  uint8_t get_byte(CpuState&) override { return 0; }
+  void set_byte(CpuState&, uint8_t) override {};
+  std::string get_name() override {
+    return std::string("d8");
+  }
+};
+
+class AddressNextWord : public AddressWord {
+  public:
+  uint16_t get_word(CpuState&) override { return 0; }
+  void set_word(CpuState&, uint16_t) override {};
+  std::string get_name() override {
+    return std::string("d16");
+  }
+};
+
+class AddressLocationNextByte : public AddressLocation {
+  public:
+  
+  std::string get_name() override {
+    return std::string("(d8)");
+  }
+  uint16_t get_address(CpuState&) const { return 0; }
+};
+
+class AddressLocationNextWord : public AddressLocation {
+  public:
+  std::string get_name() override {
+    return std::string("(d16)");
+  }
+  uint16_t get_address(CpuState&) const { return 0; }
 };

@@ -31,3 +31,8 @@ void ExchangeOperation(CpuState&);
 
 template<class TInto, class TFrom>
 void AddOperation(CpuState&);
+
+void StopOperation(CpuState&);
+
+template <class TCondition, class TOffset>
+void RelativeJumpOperation(CpuState&);
